@@ -1,5 +1,12 @@
-package stone;
+package stone.token;
 
+import stone.StoneException;
+
+/**
+ * 代码解析的最小单位称为Token
+ * @author zsp-pc
+ *
+ */
 public abstract class Token {
 	public static final Token EOF = new Token(-1){};
 	public static final String EOL = "\\n";

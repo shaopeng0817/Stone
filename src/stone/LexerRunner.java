@@ -1,5 +1,7 @@
 package stone;
 
+import stone.token.Token;
+
 public class LexerRunner {
 	
 	public static void main(String[] args) throws ParseException {

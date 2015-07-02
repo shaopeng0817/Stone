@@ -2,6 +2,8 @@ package stone;
 
 import java.io.IOException;
 
+import stone.token.Token;
+
 public class ParseException extends Exception {
 	
 	private static final long serialVersionUID = 1L;

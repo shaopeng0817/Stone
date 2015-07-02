@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import stone.token.IdToken;
+import stone.token.NumToken;
+import stone.token.StrToken;
+import stone.token.Token;
+
 /**
  * 词法分析程序
  * @author zsp-pc
@@ -14,6 +19,9 @@ import java.util.regex.Pattern;
  */
 public class Lexer {
 	// 要匹配的正则表达式
+	// 整型：[0-9]+
+	// 字符串："(\\"|\\\\|\\n|[^"])*"
+	// 标识符：[A-Za-z][A-Za-z0-9]*|==|<=|>=|&&|\|\||\p{Punct}
 	public static String regexPat = "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")|[A-Za-z][A-Za-z0-9]*|==|<=|>=|&&|\\|\\||\\p{Punct})?";
 	private Pattern pattern = Pattern.compile(regexPat);
 	private ArrayList<Token> queue = new ArrayList<>();
@@ -39,6 +47,12 @@ public class Lexer {
 			return Token.EOF;
 	}
 
+	/**
+	 * 填充队列
+	 * @param i
+	 * @return
+	 * @throws ParseException
+	 */
 	private boolean fillQueue(int i) throws ParseException {
 		while (i >= queue.size()) 
 			if(hasMore)
@@ -48,27 +62,36 @@ public class Lexer {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @throws ParseException
+	 */
 	protected void readLine() throws ParseException {
 		String line;
+		
+		//读取一行
 		try {
 			line = reader.readLine();
 		} catch (IOException e) {
 			throw new ParseException(e);
 		}
+		
+		//若为空，则hasMore=false，退出
 		if(line == null) {
 			hasMore = false;
 			return;
 		}
+		
 		int lineNo = reader.getLineNumber();
 		Matcher matcher = pattern.matcher(line);
-		matcher.useTransparentBounds(true).useAnchoringBounds(false);
+		matcher.useTransparentBounds(true).useAnchoringBounds(false);	//？？
 		int pos = 0;
 		int endPos = line.length();
 		while(pos < endPos) {
-			matcher.region(pos, endPos);
-			if(matcher.lookingAt()) {
+			matcher.region(pos, endPos);	//限定该对象的匹配范围
+			if(matcher.lookingAt()) {	//检查范围内进行正则表达式匹配
 				addToken(lineNo, matcher);
-				pos = matcher.end();
+				pos = matcher.end();	//取得匹配部分的结束位置
 			} else {
 				throw new ParseException("bad token at line " + lineNo);
 			}
@@ -78,12 +101,12 @@ public class Lexer {
 	
 	protected void addToken(int lineNo, Matcher matcher) {
 		String m = matcher.group(1);
-		if(m != null) {	// if not a space
-			if(matcher.group(2) == null) { // if not a comment
+		if(m != null) {	// 如果不是空格
+			if(matcher.group(2) == null) { // 如果不是注释
 				Token token;
-				if(matcher.group(3) != null)
+				if(matcher.group(3) != null)	//符合整数的正则
 					token = new NumToken(lineNo, Integer.parseInt(m));
-				else if(matcher.group(4) != null)
+				else if(matcher.group(4) != null)	//符合字符串的正则
 					token = new StrToken(lineNo, toStringLiteral(m));
 				else
 					token = new IdToken(lineNo, m);
@@ -110,41 +133,4 @@ public class Lexer {
 		}
 		return sb.toString();
 	}
-	
-	protected static class NumToken extends Token {
-		private int value;
-		
-		protected NumToken(int line, int v) {
-			super(line);
-			value = v;
-		}
-		
-		public boolean isNumber() { return true; }
-		public String getText() { return Integer.toString(value); }
-		public int getNumber() { return value; }
-	}
-	
-	protected static class IdToken extends Token {
-		private String text;
-		
-		protected IdToken(int line, String id) {
-			super(line);
-			text = id;
-		}
-		
-		public boolean isIdentifier() { return true; }
-		public String getText() { return text; }
-	}
-	
-	protected static class StrToken extends Token {
-        private String literal;
-        
-        StrToken(int line, String str) {
-            super(line);
-            literal = str;
-        }
-        
-        public boolean isString() { return true; }
-        public String getText() { return literal; }
-    }
 }
