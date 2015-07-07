@@ -18,8 +18,9 @@ import stone.ast.WhileStmnt;
 import stone.token.Token;
 
 /**
- * 
+ * 基本语法分析，生成语法树
  * @author zsp-pc 
+ * BNF
  * primary : "(" expr ")" | NUMBER | IDENTIFIER | STRING 
  * factor : "-" primary | primary expr : factor { OP factor } 
  * block : "{" [statement ] {(";" | EOL) [ statement ]} "}" 
