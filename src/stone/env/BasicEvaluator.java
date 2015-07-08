@@ -2,6 +2,7 @@ package stone.env;
 
 import java.util.List;
 
+import javassist.gluonj.Reviser;
 import stone.StoneException;
 import stone.ast.ASTLeaf;
 import stone.ast.ASTList;
@@ -17,15 +18,18 @@ import stone.ast.StringLiteral;
 import stone.ast.WhileStmnt;
 import stone.token.Token;
 
+@Reviser
 public class BasicEvaluator {
 	
 	public static final int TRUE = 1;
 	public static final int FALSE = 2;
 	
+	@Reviser
 	public static abstract class ASTreeEx extends ASTree {
 		public abstract Object eval(Environment env);
 	}
 	
+	@Reviser
 	public static class ASTListEx extends ASTList {
 		public ASTListEx(List<ASTree> list) {
 			super(list);
@@ -35,6 +39,7 @@ public class BasicEvaluator {
 		}
 	}
 	
+	@Reviser
 	public static class ASTLeafEx extends ASTLeaf {
 		public ASTLeafEx(Token t) {
 			super(t);
@@ -45,6 +50,7 @@ public class BasicEvaluator {
 	}
 	
 	//NumberEx
+	@Reviser
 	public static class NumberEx extends NumberLiteral {
 		public NumberEx(Token t) {
 			super(t);
@@ -55,6 +61,7 @@ public class BasicEvaluator {
 	}
 	
 	//StringEx
+	@Reviser
 	public static class StringEx extends StringLiteral {
 		public StringEx(Token t) {
 			super(t);
@@ -65,6 +72,7 @@ public class BasicEvaluator {
 	}
 	
 	//NameEx
+	@Reviser
 	public static class NameEx extends Name {
 		public NameEx(Token t) {
 			super(t);
@@ -79,6 +87,7 @@ public class BasicEvaluator {
 	}
 	
 	//¸ºÊý
+	@Reviser
 	public static class NegativeEx extends NegativeExpr {
 		public NegativeEx(List<ASTree> c) {
 			super(c);
@@ -92,6 +101,7 @@ public class BasicEvaluator {
 		}
 	}
 	
+	@Reviser
 	public static class BinaryEx extends BinaryExpr {
 		public BinaryEx(List<ASTree> c) {
 			super(c);
@@ -159,6 +169,7 @@ public class BasicEvaluator {
 		}
 	}
 	
+	@Reviser
 	public static class BlockEx extends BlockStmnt {
 		public BlockEx(List<ASTree> c) {
 			super(c);
@@ -173,6 +184,7 @@ public class BasicEvaluator {
 		}
 	}
 	
+	@Reviser
 	public static class IfEx extends IfStmnt {
 		public IfEx(List<ASTree> c) {
 			super(c);
@@ -191,6 +203,7 @@ public class BasicEvaluator {
 		}
 	}
 	
+	@Reviser
 	public static class WhileEx extends WhileStmnt {
         public WhileEx(List<ASTree> c) { super(c); }
         public Object eval(Environment env) {
